@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>المستشار القانوني الذكي</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    min-height:100vh;
+    background:linear-gradient(135deg,#0a0a0f 0%,#0f1a2e 50%,#0a0a0f 100%);
+    font-family:'Amiri','Georgia',serif;
+    direction:rtl;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+  }
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-thumb{background:#b8860b44;border-radius:2px}
+
+  .card{
+    width:100%;max-width:780px;
+    background:rgba(10,15,30,0.95);
+    border:1px solid #b8860b44;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 0 60px #b8860b18,0 20px 60px rgba(0,0,0,0.6);
+    display:flex;flex-direction:column;
+    height:92vh;max-height:860px;
+  }
+
+  /* HEADER */
+  .header{
+    background:linear-gradient(135deg,#0d1829,#162040);
+    border-bottom:1px solid #b8860b44;
+    padding:18px 24px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .logo{
+    width:46px;height:46px;
+    background:linear-gradient(135deg,#b8860b,#d4a017);
+    border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;
+    box-shadow:0 4px 15px #b8860b44;
+    margin-left:14px;flex-shrink:0;
+  }
+  .title{color:#d4a017;font-size:18px;font-weight:700;font-family:'Scheherazade New',serif}
+  .subtitle{color:#b8860b88;font-size:12px;margin-top:2px}
+  .clear-btn{
+    background:transparent;border:none;color:#b8860b66;
+    cursor:pointer;font-size:12px;font-family:'Amiri',serif;
+    transition:color 0.2s;padding:6px 10px;border-radius:8px;
+  }
+  .clear-btn:hover{color:#b8860b}
+
+  /* API KEY SECTION */
+  .key-section{
+    padding:12px 16px;
+    border-bottom:1px solid #b8860b22;
+    display:flex;gap:8px;align-items:center;
+  }
+  .key-input{
+    flex:1;
+    background:rgba(20,30,50,0.8);
+    border:1px solid #b8860b33;
+    border-radius:10px;
+    padding:8px 14px;
+    color:#e8dcc8;
+    font-size:13px;
+    font-family:'Amiri',serif;
+    transition:border-color 0.2s;
+  }
+  .key-input:focus{outline:none;border-color:#b8860b88;box-shadow:0 0 0 2px #b8860b22}
+  .key-input::placeholder{color:#b8860b55}
+  .key-save-btn{
+    background:linear-gradient(135deg,#b8860b,#d4a017);
+    border:none;border-radius:10px;
+    padding:8px 16px;
+    color:#0a0a0f;font-weight:700;
+    font-family:'Amiri',serif;font-size:13px;
+    cursor:pointer;transition:all 0.2s;white-space:nowrap;
+  }
+  .key-save-btn:hover{transform:scale(1.03);opacity:0.9}
+  .key-status{font-size:12px;white-space:nowrap;color:#b8860b88}
+  .key-status.ok{color:#5a9a5a}
+
+  /* QUICK QUESTIONS */
+  .quick-bar{
+    padding:10px 16px;
+    border-bottom:1px solid #b8860b22;
+    display:flex;gap:8px;flex-wrap:wrap;
+  }
+  .quick-btn{
+    background:transparent;
+    border:1px solid #b8860b44;
+    color:#b8860b99;border-radius:20px;
+    padding:5px 12px;font-size:12px;
+    cursor:pointer;font-family:'Amiri',serif;
+    transition:all 0.2s;
+  }
+  .quick-btn:hover{background:#b8860b22;border-color:#b8860b88;transform:translateY(-1px)}
+
+  /* MESSAGES */
+  .messages{
+    flex:1;overflow-y:auto;
+    padding:20px 16px;
+    display:flex;flex-direction:column;gap:16px;
+  }
+  .msg{display:flex;animation:fadeIn 0.3s ease}
+  .msg.user{justify-content:flex-start}
+  .msg.bot{justify-content:flex-end}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .bubble{
+    max-width:75%;
+    border-radius:18px;
+    padding:12px 16px;
+    font-size:15px;line-height:1.8;
+    font-family:'Amiri',serif;
+    white-space:pre-wrap;
+  }
+  .msg.user .bubble{
+    background:linear-gradient(135deg,#1a2a1a,#1e3a1e);
+    border:1px solid #2d5a2d55;
+    color:#a8d4a8;
+    border-radius:18px 18px 18px 4px;
+  }
+  .msg.bot .bubble{
+    background:linear-gradient(135deg,#131c30,#1a2540);
+    border:1px solid #b8860b33;
+    color:#e8dcc8;
+    border-radius:18px 18px 4px 18px;
+  }
+  .bot-icon{
+    width:30px;height:30px;
+    background:linear-gradient(135deg,#b8860b,#d4a017);
+    border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;margin-left:10px;
+    flex-shrink:0;align-self:flex-end;
+  }
+
+  /* TYPING */
+  .typing{display:flex;gap:5px;align-items:center;padding:4px 0}
+  .dot{
+    width:7px;height:7px;
+    background:#b8860b;border-radius:50%;
+    animation:blink 1.2s infinite;
+  }
+  .dot:nth-child(2){animation-delay:0.2s}
+  .dot:nth-child(3){animation-delay:0.4s}
+  @keyframes blink{0%,80%,100%{opacity:0.2}40%{opacity:1}}
+
+  /* INPUT */
+  .input-area{
+    padding:14px 16px;
+    border-top:1px solid #b8860b22;
+    background:rgba(10,15,25,0.8);
+    display:flex;gap:10px;align-items:flex-end;
+  }
+  textarea{
+    flex:1;
+    background:rgba(20,30,50,0.8);
+    border:1px solid #b8860b33;
+    border-radius:12px;
+    padding:11px 16px;
+    color:#e8dcc8;font-size:15px;
+    font-family:'Amiri',serif;
+    resize:none;line-height:1.6;
+    transition:border-color 0.2s,box-shadow 0.2s;
+  }
+  textarea:focus{outline:none;border-color:#b8860b88;box-shadow:0 0 0 2px #b8860b22}
+  textarea::placeholder{color:#b8860b55}
+  .send-btn{
+    background:linear-gradient(135deg,#b8860b,#d4a017);
+    border:none;border-radius:12px;
+    width:46px;height:46px;
+    cursor:pointer;font-size:20px;
+    transition:all 0.2s;
+    box-shadow:0 4px 15px #b8860b33;
+    flex-shrink:0;
+  }
+  .send-btn:hover:not(:disabled){transform:scale(1.05)}
+  .send-btn:disabled{opacity:0.4;cursor:not-allowed}
+
+  /* FOOTER */
+  .footer{
+    text-align:center;padding:8px;
+    color:#b8860b44;font-size:11px;
+    font-family:'Amiri',serif;
+    border-top:1px solid #b8860b11;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div style="display:flex;align-items:center">
+      <div class="logo">⚖️</div>
+      <div>
+        <div class="title">المستشار القانوني الذكي</div>
+        <div class="subtitle">إرشادات قانونية موثوقة بالعربية الفصحى</div>
+      </div>
+    </div>
+    <button class="clear-btn" onclick="clearChat()">محادثة جديدة</button>
+  </div>
+
+  <!-- API KEY -->
+  <div class="key-section">
+    <span style="color:#b8860b88;font-size:13px;white-space:nowrap">🔑 المفتاح:</span>
+    <input class="key-input" type="password" id="apiKey" placeholder="أدخل Groq API Key هنا..."/>
+    <button class="key-save-btn" onclick="saveKey()">حفظ</button>
+    <span class="key-status" id="keyStatus">غير محفوظ</span>
+  </div>
+
+  <!-- QUICK QUESTIONS -->
+  <div class="quick-bar">
+    <button class="quick-btn" onclick="fillPrompt('ما هي حقوق العامل عند الفصل التعسفي؟')">الفصل التعسفي</button>
+    <button class="quick-btn" onclick="fillPrompt('كيف أسجل عقد إيجار قانونياً؟')">عقد الإيجار</button>
+    <button class="quick-btn" onclick="fillPrompt('ما هي إجراءات الطلاق القضائي؟')">الطلاق القضائي</button>
+    <button class="quick-btn" onclick="fillPrompt('كيف أحمي ملكيتي الفكرية؟')">الملكية الفكرية</button>
+    <button class="quick-btn" onclick="fillPrompt('ما هي حقوق المستهلك في حالة الغش التجاري؟')">حقوق المستهلك</button>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="messages" id="messages">
+    <div class="msg bot">
+      <div class="bot-icon">⚖️</div>
+      <div class="bubble">مرحباً بك في المستشار القانوني الذكي. أنا هنا لتزويدك بالإرشادات القانونية اللازمة باللغة العربية الفصحى السليمة.<br/><br/>أدخل مفتاح Groq API في الأعلى ثم اكتب سؤالك القانوني.</div>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="input-area">
+    <textarea id="userInput" rows="2" placeholder="اكتب سؤالك القانوني هنا..." onkeydown="handleKey(event)"></textarea>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()" disabled>←</button>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">المعلومات المقدمة للإرشاد العام فقط • استشر محامياً متخصصاً للقضايا المعقدة</div>
+
+</div>
+
+<script>
+const SYSTEM_PROMPT = `أنت مستشار قانوني متخصص يقدم إرشادات قانونية باللغة العربية الفصحى السليمة الخالية من الأخطاء.
+
+قواعد عملك:
+- أجب دائماً بالعربية الفصحى الصحيحة، خالية تماماً من الأخطاء النحوية والإملائية
+- قدّم معلومات قانونية دقيقة وموضوعية ومنظمة
+- تخصصاتك: القانون المدني، قانون الأسرة، قانون العمل، القانون التجاري، قانون العقوبات
+- نبّه المستخدم دائماً إلى ضرورة استشارة محامٍ متخصص للقضايا المعقدة
+- كن واضحاً ومنظماً ومحترفاً في ردودك
+- استخدم الترقيم والنقاط لتنظيم المعلومات عند الحاجة`;
+
+let history = [];
+let apiKey = localStorage.getItem("groq_key") || "";
+
+// تحميل الـ key المحفوظة
+window.onload = () => {
+  if (apiKey) {
+    document.getElementById("apiKey").value = apiKey;
+    document.getElementById("keyStatus").textContent = "✓ محفوظ";
+    document.getElementById("keyStatus").className = "key-status ok";
+    document.getElementById("sendBtn").disabled = false;
+  }
+};
+
+function saveKey() {
+  const val = document.getElementById("apiKey").value.trim();
+  if (!val) return;
+  apiKey = val;
+  localStorage.setItem("groq_key", val);
+  document.getElementById("keyStatus").textContent = "✓ محفوظ";
+  document.getElementById("keyStatus").className = "key-status ok";
+  document.getElementById("sendBtn").disabled = false;
+}
+
+function fillPrompt(text) {
+  document.getElementById("userInput").value = text;
+  document.getElementById("userInput").focus();
+}
+
+function handleKey(e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function addMessage(text, role) {
+  const box = document.getElementById("messages");
+  const div = document.createElement("div");
+  div.className = "msg " + (role === "user" ? "user" : "bot");
+
+  if (role === "bot") {
+    const icon = document.createElement("div");
+    icon.className = "bot-icon";
+    icon.textContent = "⚖️";
+    div.appendChild(icon);
+  }
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.textContent = text;
+  div.appendChild(bubble);
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  return bubble;
+}
+
+function addTyping() {
+  const box = document.getElementById("messages");
+  const div = document.createElement("div");
+  div.className = "msg bot";
+  div.id = "typing-indicator";
+
+  const icon = document.createElement("div");
+  icon.className = "bot-icon";
+  icon.textContent = "⚖️";
+  div.appendChild(icon);
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.innerHTML = '<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+  div.appendChild(bubble);
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById("typing-indicator");
+  if (el) el.remove();
+}
+
+async function sendMessage() {
+  if (!apiKey) {
+    alert("الرجاء إدخال Groq API Key أولاً");
+    return;
+  }
+
+  const input = document.getElementById("userInput");
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = "";
+  document.getElementById("sendBtn").disabled = true;
+
+  addMessage(text, "user");
+  history.push({ role: "user", content: text });
+
+  addTyping();
+
+  try {
+    const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + apiKey
+      },
+      body: JSON.stringify({
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          ...history
+        ],
+        max_tokens: 1024,
+        temperature: 0.4
+      })
+    });
+
+    const data = await res.json();
+    removeTyping();
+
+    if (data.error) {
+      addMessage("❌ خطأ: " + (data.error.message || "تحقق من صحة المفتاح"), "bot");
+      history.pop();
+    } else {
+      const reply = data.choices?.[0]?.message?.content || "لم أتمكن من معالجة طلبك.";
+      history.push({ role: "assistant", content: reply });
+      addMessage(reply, "bot");
+    }
+
+  } catch (e) {
+    removeTyping();
+    addMessage("❌ حدث خطأ في الاتصال. تحقق من الإنترنت وحاول مجدداً.", "bot");
+    history.pop();
+  }
+
+  document.getElementById("sendBtn").disabled = false;
+  document.getElementById("userInput").focus();
+}
+
+function clearChat() {
+  history = [];
+  const box = document.getElementById("messages");
+  box.innerHTML = "";
+  addMessage("محادثة جديدة. كيف يمكنني مساعدتك اليوم؟", "bot");
+}
+</script>
+</body>
+</html>
